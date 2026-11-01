@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulasi Ujian Entrepreneurship – 150 Soal</title>
+<style>
+:root{
+  --bg:#eef2ee;--surface:#fff;--ink:#16221c;--mute:#5d6b63;--line:#cfd9d1;
+  --accent:#1f6b4a;--accent-ink:#fff;--warn:#b3261e;--sel:#e0f0e6;--bad-bg:#fdecea;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#101712;--surface:#18221b;--ink:#e6efe8;--mute:#9bab9f;--line:#2c3a30;
+    --accent:#4cc38a;--accent-ink:#06150d;--warn:#ff8a80;--sel:#1f3a2a;--bad-bg:#3a1f1c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101712;--surface:#18221b;--ink:#e6efe8;--mute:#9bab9f;--line:#2c3a30;
+  --accent:#4cc38a;--accent-ink:#06150d;--warn:#ff8a80;--sel:#1f3a2a;--bad-bg:#3a1f1c;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  line-height:1.55;user-select:none;-webkit-user-select:none;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.screen{display:none;min-height:100%;padding:20px;align-items:flex-start;justify-content:center}
+.screen.on{display:flex}
+#sStart{align-items:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px;width:100%;max-width:820px}
+h1{font-size:1.7rem;margin:0 0 6px;line-height:1.2}
+h2{font-size:1.2rem;margin:0 0 14px;line-height:1.4}
+p{margin:0 0 12px}
+.mute{color:var(--mute)}
+ul.rules{padding-left:20px;margin:14px 0 20px}
+ul.rules li{margin-bottom:6px}
+input[type=text]{
+  width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg);color:var(--ink);font-size:1rem;
+  user-select:text;-webkit-user-select:text;margin-bottom:16px;
+}
+button{
+  font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);padding:10px 18px;
+}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button.danger{color:var(--warn);border-color:var(--warn);background:transparent;font-weight:600}
+button.danger:hover{background:var(--bad-bg)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.saved{background:var(--sel);border-color:var(--accent);color:var(--accent);opacity:1}
+.top{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);
+}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.progress{font-size:.85rem;color:var(--mute);margin-top:2px}
+.viol{color:var(--warn);font-size:.9rem}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.qhead p{margin:0}
+.badge{
+  display:inline-block;font-size:.78rem;padding:2px 10px;border-radius:999px;
+  background:var(--sel);color:var(--accent);border:1px solid var(--accent);font-weight:600;
+}
+.opt{display:block;width:100%;text-align:left;margin-bottom:10px;padding:12px 14px;border-width:2px}
+.opt.sel{border-color:var(--accent);background:var(--sel)}
+.opt.correct{border-color:var(--accent);background:var(--sel)}
+.opt.wrong{border-color:var(--warn);background:var(--bad-bg)}
+.opt:disabled{opacity:1;cursor:default}
+.feedback{margin-top:14px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:.95rem}
+.feedback.good{border-color:var(--accent);background:var(--sel)}
+.feedback.bad{border-color:var(--warn);background:var(--bad-bg)}
+.feedback strong{font-weight:700}
+.hidden{display:none!important}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+.nav #save{flex:1;min-width:180px}
+.dots{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:8px;
+  margin-top:18px;max-height:230px;overflow:auto;padding:4px;
+}
+.dots button{width:100%;height:38px;padding:0;font-weight:600;font-size:.9rem}
+.dots button.done{background:var(--sel);border-color:var(--accent)}
+.dots button.picked{border-color:var(--accent)}
+.dots button.cur{outline:3px solid var(--accent);outline-offset:1px}
+#block{
+  position:fixed;inset:0;z-index:99;background:rgba(10,14,12,.97);color:#fff;
+  display:none;align-items:center;justify-content:center;padding:24px;text-align:center;
+}
+#block.on{display:flex}
+#block .box{max-width:460px}
+#block h2{font-size:1.6rem;color:#ff8a80}
+#block button{background:#fff;color:#111;border-color:#fff;font-weight:600}
+#block button.danger{background:transparent;color:#ff8a80;border-color:#ff8a80}
+.block-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.result-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.score{font-size:3rem;font-weight:800;color:var(--accent);line-height:1.1}
+.rev-head{margin:22px 0 6px;font-size:1rem;color:var(--accent)}
+.rev-group{border-top:1px solid var(--line)}
+.rev{border-bottom:1px solid var(--line);padding:12px 0}
+.rev-q{margin-bottom:4px}
+.rev-line{font-size:.94rem}
+.rev-line.ok{color:var(--accent)}
+.rev-line.bad{color:var(--warn)}
+.tag{display:inline-block;font-size:.75rem;padding:1px 8px;border-radius:999px;border:1px solid currentColor;margin-left:6px}
+@media (max-width:560px){
+  .card{padding:20px}
+  .nav #save{flex:1 1 100%;order:-1}
+  .dots{max-height:190px}
+}
+</style>
+</head>
+<body>
+
+<!-- Layar mulai -->
+<section class="screen on" id="sStart">
+  <div class="card">
+    <h1>Simulasi Ujian Entrepreneurship</h1>
+    <p class="mute">150 soal pilihan ganda · tanpa batas waktu · kunci jawaban langsung</p>
+    <ul class="rules">
+      <li>Pilih satu jawaban, lalu tekan <strong>Simpan Jawaban</strong>.</li>
+      <li>Setelah disimpan, jawaban benar/salah dan kunci jawaban langsung ditampilkan.</li>
+      <li>Jawaban yang sudah disimpan terkunci dan tidak dapat diubah.</li>
+      <li>Tidak ada timer. Anda dapat mengerjakan sesuai kecepatan sendiri.</li>
+      <li>Tombol <strong>Keluar Ujian</strong> selalu tersedia di layar ujian.</li>
+      <li>Mode aman: berpindah tab/aplikasi atau keluar dari layar penuh dicatat sebagai pelanggaran. Pada pelanggaran ke-3, ujian dihentikan otomatis.</li>
+      <li>Klik kanan, salin, tempel, dan pintasan keyboard (F12, Ctrl+U, dll.) dinonaktifkan.</li>
+    </ul>
+    <label for="nama">Nama lengkap</label>
+    <input type="text" id="nama" autocomplete="off" placeholder="Tulis nama Anda">
+    <button class="pri" id="btnStart" type="button">Mulai ujian</button>
+  </div>
+</section>
+
+<!-- Layar ujian -->
+<section class="screen" id="sExam">
+  <div class="card">
+    <div class="top">
+      <div>
+        <strong id="who"></strong>
+        <div class="progress" id="progressTxt"></div>
+        <div class="viol" id="violTxt"></div>
+      </div>
+      <div class="top-actions">
+        <button class="danger" id="btnExit" type="button">Keluar Ujian</button>
+      </div>
+    </div>
+    <div class="qhead">
+      <p class="mute" id="qNo"></p>
+      <span class="badge" id="qPertemuan"></span>
+    </div>
+    <h2 id="qText"></h2>
+    <div id="opts"></div>
+    <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+    <div class="nav">
+      <button id="prev" type="button">Sebelumnya</button>
+      <button id="save" class="pri" type="button">Simpan Jawaban</button>
+      <button id="next" type="button">Berikutnya</button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<!-- Layar hasil -->
+<section class="screen" id="sEnd">
+  <div class="card">
+    <div class="result-head">
+      <div>
+        <h1>Ujian selesai</h1>
+        <p id="endNote" class="mute"></p>
+      </div>
+      <button class="danger" id="btnHome" type="button">Keluar</button>
+    </div>
+    <div class="score" id="score"></div>
+    <p id="endMeta" class="mute"></p>
+    <div id="review"></div>
+  </div>
+</section>
+
+<!-- Halaman diblokir -->
+<div id="block" role="alertdialog" aria-modal="true">
+  <div class="box">
+    <h2>Halaman diblokir</h2>
+    <p id="blockWhy"></p>
+    <p id="blockCount"></p>
+    <div class="block-actions">
+      <button id="btnResume" type="button">Kembali ke ujian</button>
+      <button id="btnExitBlock" class="danger" type="button">Keluar Ujian</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MAX_VIOL = 3;
+const QUESTIONS = [{"q":"Visi Universitas Bina Sarana Informatika (UBSI) adalah menjadi universitas unggul di bidang ... pada tahun 2033.","o":["Teknologi informasi","Ekonomi kreatif","Manajemen perbankan","Pariwisata digital"],"a":1},{"q":"Lulusan perguruan tinggi diharapkan menjadi job creator, yaitu orang yang ...","o":["Mencari pekerjaan di perusahaan besar","Bekerja sebagai karyawan tetap","Menciptakan lapangan pekerjaan","Menunggu lowongan dari pemerintah"],"a":2},{"q":"Kata wiraswasta terdiri dari unsur wira, swa, dan sta yang masing-masing berarti ...","o":["Manusia unggul, sendiri, dan berdiri","Berani, usaha, dan daya","Saudagar, sendiri, dan bisnis","Perantara, kerja, dan berdiri"],"a":0},{"q":"Salah satu pelopor konsep wiraswasta di Indonesia menurut materi adalah ...","o":["Ir. Ciputra","Robert T. Kiyosaki","Carol Dweck","Dr. Suparman Suhamamijaya"],"a":3},{"q":"Istilah entrepreneur berasal dari bahasa Prancis dan diterjemahkan ke dalam bahasa Inggris sebagai between taker atau go-between yang berarti ...","o":["Pemilik modal","Perantara","Pekerja keras","Pengambil keputusan"],"a":1},{"q":"Wirausaha yang menjalankan usaha karena terpaksa atau didorong oleh kebutuhan hidup disebut ...","o":["Innovative Entrepreneur","Replicative Entrepreneur","Creative Entrepreneur","Necessity Entrepreneur"],"a":3},{"q":"Wirausaha yang cenderung meniru jenis bisnis yang sedang populer dan banyak diminati masyarakat disebut ...","o":["Replicative Entrepreneur","Necessity Entrepreneur","Innovative Entrepreneur","Digital Entrepreneur"],"a":0},{"q":"Wirausaha yang berpikir kreatif serta menciptakan ide baru dan mengembangkan peluang yang ditemukan disebut ...","o":["Necessity Entrepreneur","Replicative Entrepreneur","Innovative Entrepreneur","Traditional Entrepreneur"],"a":2},{"q":"Dalam buku Cashflow Quadrant karya Robert T. Kiyosaki, empat kuadran manusia berdasarkan sumber penghasilan adalah ...","o":["E, M, B, I","E, S, B, I","E, S, C, I","F, S, B, I"],"a":1},{"q":"Dibandingkan dengan karyawan, penghasilan seorang wirausaha pada umumnya ...","o":["Pasti dan teratur setiap bulan","Tetap dan tidak berubah","Selalu lebih kecil dari karyawan","Bervariasi dan tidak selalu tetap"],"a":3},{"q":"Usaha ekstraktif adalah usaha yang bergerak dalam bidang ...","o":["Pertambangan atau pengambilan sumber daya langsung dari alam","Perdagangan barang dan komoditas","Pemberian pelayanan kepada konsumen","Pengolahan bahan mentah menjadi produk jadi"],"a":0},{"q":"Dalam sistem waralaba, perusahaan induk yang memberikan lisensi atau hak waralaba disebut ...","o":["Franchisee","Distributor","Franchisor","Investor"],"a":2},{"q":"Menurut Zimmerer, salah satu hal yang perlu dianalisis sebelum membeli perusahaan yang sudah berjalan adalah ...","o":["Warna logo perusahaan","Alasan pemilik menjual perusahaan","Jumlah pengikut media sosial pemilik","Hobi pemilik perusahaan"],"a":1},{"q":"Dalam sistem penilaian mata kuliah Entrepreneurship, nilai project memiliki bobot sebesar ...","o":["10 persen","15 persen","50 persen","75 persen"],"a":3},{"q":"Mahasiswa yang tidak mengikuti seminar wajib Entrepreneurship akan mendapatkan pengurangan nilai sebesar ...","o":["30 persen","10 persen","15 persen","50 persen"],"a":0},{"q":"Contoh pekerjaan yang sebagian tugasnya telah digantikan sistem otomatis akibat Revolusi Industri 4.0 adalah ...","o":["Dokter dan guru","Petani dan nelayan","Teller bank dan penjaga gerbang tol","Pengacara dan arsitek"],"a":2},{"q":"Kata saudagar berasal dari bahasa Sanskerta dan diartikan sebagai seseorang yang ...","o":["Memiliki banyak akal dalam menjalankan usahanya","Hanya berdagang barang impor","Bekerja pada orang lain","Mengambil keputusan tanpa perencanaan"],"a":0},{"q":"Secara harfiah, kata wira dan usaha dalam istilah wirausaha berarti ...","o":["Unggul dan modal","Mandiri dan berdiri","Perantara dan pekerjaan","Berani dan daya upaya"],"a":3},{"q":"Salah satu kelemahan menjadi wirausahawan menurut materi adalah ...","o":["Tidak memiliki kesempatan menjadi pemimpin","Pendapatan tidak pasti karena keuntungan dapat berubah-ubah","Waktu kerja selalu lebih pendek dari karyawan","Tidak dapat memberi manfaat kepada masyarakat"],"a":1},{"q":"Usaha agraris adalah usaha yang berkaitan dengan ...","o":["Pertambangan","Pemberian jasa kepada konsumen","Jual beli barang kepada konsumen","Pengelolaan sumber daya pertanian, seperti perkebunan dan peternakan"],"a":3},{"q":"Metode memasuki dunia bisnis yang digunakan dalam mata kuliah Entrepreneurship adalah ...","o":["Membeli perusahaan yang sudah berjalan","Waralaba atau franchising","Merintis dan membangun usaha dari nol","Mewarisi usaha keluarga"],"a":2},{"q":"Setiap kelompok dalam mata kuliah Entrepreneurship terdiri dari ...","o":["Tiga sampai lima orang","Dua sampai tiga orang","Enam sampai delapan orang","Sepuluh sampai dua belas orang"],"a":0},{"q":"Memiliki keyakinan terhadap kemampuan diri, keteguhan, kemandirian, dan sikap optimis merupakan karakteristik wirausaha yang disebut ...","o":["Berorientasi pada masa depan","Memiliki jiwa kepemimpinan","Percaya diri","Keorisinilan"],"a":2},{"q":"Menurut Bygrave, karakteristik 10 D yang berarti memiliki impian, cita-cita, dan visi yang jelas adalah ...","o":["Dream","Doers","Devotion","Destiny"],"a":0},{"q":"Karakteristik Dollars dalam 10 D Bygrave berarti ...","o":["Hanya mengejar keuntungan sebesar-besarnya","Selalu menghemat pengeluaran","Mengutamakan pinjaman modal","Tidak menjadikan kekayaan sebagai satu-satunya tujuan utama"],"a":3},{"q":"Karakteristik Distribute dalam 10 D Bygrave berarti ...","o":["Mendistribusikan produk ke seluruh wilayah","Bersedia membagikan kepemilikan bisnis kepada pihak lain","Membagikan barang secara gratis","Membagi waktu antara kerja dan keluarga"],"a":1},{"q":"Karakteristik wirausaha yang memiliki perhatian terhadap hal-hal penting secara rinci disebut ...","o":["Determination","Dedication","Details","Decisiveness"],"a":2},{"q":"Tiga kunci memulai usaha yang dikenal dengan istilah 3M adalah ...","o":["Motivasi, Mindset, dan Make It","Modal, Manajemen, dan Marketing","Motivasi, Modal, dan Mitra","Mindset, Manajemen, dan Make It"],"a":0},{"q":"Mindset dapat dipahami sebagai ...","o":["Kemampuan menghitung keuntungan usaha","Alat untuk membuat laporan keuangan","Perencanaan tertulis mengenai bisnis","Pandangan mental yang memengaruhi pendekatan seseorang terhadap suatu keadaan"],"a":3},{"q":"Menurut Carol Dweck, pola pikir yang meyakini bahwa kecerdasan dan bakat berasal dari keturunan dan sulit dikembangkan disebut ...","o":["Growth Mindset","Fixed Mindset","Positive Mindset","Creative Mindset"],"a":1},{"q":"Salah satu ciri orang dengan Growth Mindset adalah ...","o":["Menghindari tantangan","Mudah menyerah ketika sulit","Memandang kegagalan sebagai bagian dari proses belajar","Merasa terancam oleh keberhasilan orang lain"],"a":2},{"q":"Tiga komponen mindset adalah ...","o":["Paradigma, keyakinan dasar, dan nilai dasar","Visi, misi, dan tujuan","Motivasi, tindakan, dan hasil","Persepsi, imajinasi, dan aksi"],"a":0},{"q":"Urutan tahapan menjadi wirausahawan yang benar adalah ...","o":["Model bisnis, ide usaha, pengembangan usaha","Pengembangan usaha, ide usaha, model bisnis","Ide usaha, pengembangan usaha, model bisnis","Ide usaha, model bisnis, pengembangan usaha"],"a":3},{"q":"Prinsip 3M dalam mencari ide bisnis adalah ...","o":["Mulai dari modal besar, mulai dari kuliah, mulai dari rumah","Mulai dari yang disukai, mulai dari yang dikuasai, dan mulai sekarang","Mulai dari yang murah, mulai dari yang mudah, dan mulai nanti","Mulai dari pesaing, mulai dari investor, dan mulai dari bank"],"a":1},{"q":"Dalam prinsip 3A, ATM merupakan singkatan dari ...","o":["Amati Tiru Persis","Amati Buat Sendiri","Amati Tiru Modifikasi","Amati Tanya Mulai"],"a":2},{"q":"Peta Proposisi Nilai (Value Map) dalam Value Proposition Design berfokus pada ...","o":["Produk dan jasa, Gain Creators, dan Pain Relievers","Customer Jobs, Gains, dan Pains","Segmen pelanggan, saluran, dan pendapatan","Biaya tetap, biaya variabel, dan laba"],"a":0},{"q":"Dalam Customer Profile, bagian Pains menggambarkan ...","o":["Hasil dan manfaat yang diinginkan pelanggan","Tugas yang ingin diselesaikan pelanggan","Keuntungan perusahaan dari pelanggan","Hasil buruk, risiko, dan hambatan yang berhubungan dengan tugas pelanggan"],"a":3},{"q":"Kemampuan mengambil keputusan secara cepat dan tepat dengan mempertimbangkan berbagai hal secara matang dalam 10 D Bygrave disebut ...","o":["Dream","Decisiveness","Dedication","Details"],"a":1},{"q":"Karakteristik wirausaha yang memiliki tekad kuat, tanggung jawab tinggi, dan tidak mudah menyerah menurut Bygrave adalah ...","o":["Distribute","Dollars","Doers","Determination"],"a":3},{"q":"Karakteristik Devotion dalam 10 D Bygrave berarti ...","o":["Mencintai pekerjaan serta produk atau jasa yang dihasilkan","Memiliki kesadaran bertanggung jawab atas nasib sendiri","Memiliki impian dan visi yang jelas","Mengambil keputusan secara cepat"],"a":0},{"q":"Motivasi dalam konsep 3M memiliki pengertian ...","o":["Pola pikir yang produktif, kreatif, dan positif","Tindakan nyata untuk segera memulai usaha","Dorongan kuat dari dalam diri untuk memulai dan menjalankan usaha","Modal uang yang dibutuhkan untuk memulai usaha"],"a":2},{"q":"Make It dalam konsep 3M berarti ...","o":["Mencari pinjaman modal usaha","Segera melakukan tindakan nyata","Membuat laporan keuangan","Menunggu waktu yang tepat untuk berusaha"],"a":1},{"q":"Kesenjangan antara supply dan demand sebagai sumber ide usaha adalah kondisi ...","o":["Kelebihan modal usaha","Persaingan harga antarpesaing","Perbedaan gaji antarpegawai","Ketidakseimbangan antara ketersediaan barang atau jasa dengan kebutuhan pasar"],"a":3},{"q":"Musik yang dapat diunduh termasuk jenis produk ...","o":["Fisik atau berwujud","Finansial","Digital","Hasil pabrikan"],"a":2},{"q":"Menurut Hisrich, business plan adalah ...","o":["Dokumen berisi daftar harga produk","Dokumen tertulis yang disiapkan wirausahawan berisi unsur internal dan eksternal perusahaan","Laporan keuangan tahunan perusahaan","Surat izin usaha dari pemerintah"],"a":1},{"q":"Salah satu manfaat utama business plan adalah ...","o":["Menggantikan izin usaha","Menghilangkan seluruh risiko bisnis","Menjamin keuntungan perusahaan","Sebagai panduan menjalankan bisnis dan dokumen pendukung mencari pendanaan"],"a":3},{"q":"Business Model Canvas (BMC) dikembangkan berdasarkan ... blok utama.","o":["Sembilan","Tujuh","Sepuluh","Lima"],"a":0},{"q":"Tiga bagian utama BMC secara umum adalah ...","o":["Product, Price, dan Place","Plan, Do, dan Check","Offering, Customer, dan Infrastructure","Revenue, Cost, dan Profit"],"a":2},{"q":"Model bisnis yang melayani beberapa kelompok pelanggan sekaligus, seperti Facebook yang melayani pengguna dan pengiklan, disebut ...","o":["Single Market","Multi-Sided Market","Niche Market","Mass Market"],"a":1},{"q":"Usia, jenis kelamin, minat, hobi, dan tingkat penghasilan konsumen termasuk dalam ...","o":["Customer Relationship","Revenue Streams","Key Partnership","Customer Characteristics"],"a":3},{"q":"Framework AIDA yang digunakan dalam menentukan channels adalah ...","o":["Attention, Interest, Desire, Action","Analysis, Idea, Design, Action","Attention, Idea, Demand, Achievement","Awareness, Interest, Decision, Agreement"],"a":0},{"q":"Blok BMC yang menjelaskan cara bisnis membangun dan menjaga hubungan dengan pelanggan, seperti program membership, adalah ...","o":["Channels","Key Resources","Customer Relationship","Cost Structure"],"a":2},{"q":"Blok BMC yang menjelaskan sumber pendapatan perusahaan dari value proposition yang ditawarkan adalah ...","o":["Key Activities","Revenue Streams","Customer Segments","Key Partnership"],"a":1},{"q":"Aktivitas pokok yang harus dilakukan perusahaan agar dapat menghasilkan value proposition disebut ...","o":["Key Resources","Channels","Cost Structure","Key Activities"],"a":3},{"q":"Dalam contoh SignifierGames.com, kerja sama dengan penerbit untuk membuat dan mencetak buku merupakan contoh ...","o":["Key Partnership","Revenue Streams","Customer Relationship","Value Propositions"],"a":0},{"q":"Fixed Cost dan Variable Cost dibahas pada blok BMC ...","o":["Channels","Customer Segments","Cost Structure","Key Resources"],"a":2},{"q":"Hasil validasi SignifierGames.com menunjukkan bahwa pihak yang lebih banyak mencari produk Serious Games adalah ...","o":["Seluruh institusi pendidikan","Universitas swasta yang bekerja sama dengan kampus besar seperti Universitas Indonesia","Sekolah dasar negeri","Perusahaan teknologi besar"],"a":1},{"q":"Bab ketiga dalam format laporan business plan adalah ...","o":["Overview","Business Model Canvas","Closure","Financial Plan"],"a":3},{"q":"Untuk mengetahui masalah dan kebutuhan konsumen, pengusaha sebaiknya ...","o":["Bertanya langsung kepada konsumen melalui pengamatan lapangan dan wawancara","Hanya mengandalkan asumsi pribadi","Menebak kebutuhan konsumen","Meniru seluruh strategi pesaing"],"a":0},{"q":"Serious Games dari SignifierGames.com dikembangkan untuk membantu pembelajaran konsep kompleks pada bidang ...","o":["Kedokteran","Hukum","Teknik, khususnya teknik industri","Seni rupa"],"a":2},{"q":"Sumber daya utama (Key Resources) SignifierGames.com adalah ...","o":["Gedung kantor yang besar","Tenaga ahli atau SDM berbakat di bidang pengembangan permainan edukasi","Mesin percetakan","Kendaraan operasional"],"a":1},{"q":"Dalam contoh SignifierGames.com, pihak yang membayar produk yang ditawarkan adalah ...","o":["Perorangan umum","Pengiklan","Investor","Institusi pendidikan"],"a":3},{"q":"Unsur penting yang harus ada pada cover business plan adalah ...","o":["Daftar isi, kata pengantar, dan abstrak","Logo, nama bisnis, serta alamat atau informasi kontak","Foto pemilik, harga produk, dan diskon","NIB, BEP, dan laporan penjualan"],"a":1},{"q":"Unsur yang TIDAK termasuk dalam Bab I Overview adalah ...","o":["Break Even Point","Business Background","Vision and Mission","Organization Structure"],"a":0},{"q":"Berikut ini yang termasuk isi lampiran laporan business plan adalah ...","o":["Visi dan Misi","Struktur Organisasi","Nomor Induk Berusaha (NIB)","Business Background"],"a":2},{"q":"Break Even Point (BEP) adalah kondisi ketika ...","o":["Pendapatan sama dengan biaya sehingga tidak untung dan tidak rugi","Perusahaan memperoleh keuntungan maksimal","Perusahaan mengalami kerugian besar","Biaya lebih besar dari pendapatan"],"a":0},{"q":"Contoh biaya tetap (Fixed Cost) adalah ...","o":["Pembelian bahan baku","Upah tenaga kerja harian","Biaya sewa tempat usaha","Komisi penjualan"],"a":2},{"q":"Contoh biaya variabel (Variable Cost) adalah ...","o":["Biaya perizinan","Pembelian bahan baku","Renovasi tempat usaha","Penyusutan aktiva tetap"],"a":1},{"q":"Anggaran yang digunakan untuk membiayai pelaksanaan dan pembukaan usaha, seperti kegiatan launching, disebut ...","o":["Business Preparation Budgets","Fixed Budgets","Variable Budgets","Business Execution Budgets"],"a":3},{"q":"Salah satu asumsi dalam analisis BEP adalah ...","o":["Hanya terdapat satu harga jual produk dan tidak berubah selama periode analisis","Harga jual berubah setiap bulan","Seluruh biaya bersifat variabel","Terdapat banyak harga jual untuk satu produk"],"a":0},{"q":"BEP dalam rupiah digunakan untuk mengetahui ...","o":["Jumlah minimal unit yang harus dijual","Jumlah karyawan yang dibutuhkan","Jumlah pendapatan penjualan minimal agar mencapai titik impas","Jumlah modal pinjaman"],"a":2},{"q":"PT ICEA memiliki kapasitas 100.000 unit dengan harga jual Rp5.000 per unit. Total penjualan jika seluruh kapasitas terjual adalah ...","o":["Rp250.000.000","Rp500.000.000","Rp150.000.000","Rp5.000.000"],"a":1},{"q":"Pada PT ICEA, total biaya tetap Rp150.000.000 dan kapasitas 100.000 unit. Biaya tetap per unit adalah ...","o":["Rp2.500","Rp5.000","Rp1.000","Rp1.500"],"a":3},{"q":"Berdasarkan data PT ICEA (harga jual Rp5.000, biaya tetap Rp150.000.000, biaya variabel Rp2.500 per unit), BEP dalam unit adalah ...","o":["30.000 unit","100.000 unit","60.000 unit","50.000 unit"],"a":2},{"q":"Revenue Sharing dalam proposal bisnis memberikan informasi kepada calon investor mengenai ...","o":["Daftar harga bahan baku","Mekanisme pembagian hasil atau keuntungan dari investasi","Struktur organisasi perusahaan","Rencana peluncuran produk"],"a":1},{"q":"Modal yang digunakan untuk kebutuhan jangka panjang, dapat dipakai berulang kali, dan umumnya untuk membeli aktiva tetap disebut ...","o":["Modal kerja","Modal pinjaman","Modal campuran","Modal investasi"],"a":3},{"q":"Modal yang digunakan untuk kebutuhan jangka pendek dan mendukung operasional perusahaan disebut ...","o":["Modal kerja","Modal investasi","Modal saham","Modal tetap"],"a":0},{"q":"Salah satu kelebihan modal sendiri adalah ...","o":["Jumlahnya tidak terbatas","Wajib dikembalikan sesuai perjanjian","Tidak menimbulkan biaya bunga dan administrasi","Memerlukan persyaratan yang rumit"],"a":2},{"q":"Modal campuran adalah ...","o":["Modal yang seluruhnya berasal dari bank","Gabungan modal sendiri dan modal pinjaman","Modal yang hanya berasal dari pemilik","Modal yang berasal dari hibah"],"a":1},{"q":"Menurut Kasmir (2017:334), salah satu tujuan analisis BEP adalah ...","o":["Menentukan lokasi usaha","Memilih karyawan","Menentukan jenis logo usaha","Menentukan harga jual setiap satuan produk"],"a":3},{"q":"Dalam komponen perhitungan BEP, P (Price) berarti ...","o":["Harga jual per satuan produk","Keuntungan usaha","Jumlah produksi","Pembayaran pajak"],"a":0},{"q":"Dalam komponen perhitungan BEP, S (Sales Volume) berarti ...","o":["Persediaan barang","Gaji karyawan","Jumlah penjualan","Tabungan usaha"],"a":2},{"q":"Modal keahlian adalah ...","o":["Uang tunai yang dimiliki pengusaha","Kemampuan dan keterampilan seseorang dalam mengelola serta menjalankan usaha","Aset tetap berupa tanah dan bangunan","Saham yang dimiliki perusahaan"],"a":1},{"q":"Salah satu kekurangan modal sendiri adalah ...","o":["Jumlahnya terbatas dan sulit diperoleh dalam jumlah besar","Menimbulkan bunga yang tinggi","Wajib dikembalikan kepada pemberi pinjaman","Memerlukan jaminan dari pihak lain"],"a":0},{"q":"Contoh sumber modal pinjaman dari lembaga keuangan nonbank adalah ...","o":["Bank swasta","Bank pemerintah","Bank asing","Perusahaan pegadaian"],"a":3},{"q":"Salah satu hal yang perlu dipertimbangkan sebelum menentukan sumber modal usaha adalah ...","o":["Warna kemasan produk","Jumlah karyawan","Jangka waktu pengembalian modal","Nama merek dagang"],"a":2},{"q":"Peraturan Pemerintah yang membahas kemudahan, pelindungan, dan pemberdayaan koperasi dan UMKM sebagai pelaksana UU Cipta Kerja adalah ...","o":["PP Nomor 20 Tahun 2008","PP Nomor 37 Tahun 2004","PP Nomor 11 Tahun 2020","PP Nomor 7 Tahun 2021"],"a":3},{"q":"Usaha mikro memiliki modal usaha paling banyak ... (tidak termasuk tanah dan bangunan tempat usaha).","o":["Rp1.000.000.000","Rp500.000.000","Rp5.000.000.000","Rp2.000.000.000"],"a":0},{"q":"Usaha kecil memiliki hasil penjualan tahunan lebih dari Rp2.000.000.000 sampai dengan paling banyak ...","o":["Rp5.000.000.000","Rp10.000.000.000","Rp15.000.000.000","Rp50.000.000.000"],"a":2},{"q":"Usaha menengah memiliki modal usaha lebih dari Rp5.000.000.000 sampai dengan paling banyak ...","o":["Rp15.000.000.000","Rp10.000.000.000","Rp50.000.000.000","Rp1.000.000.000"],"a":1},{"q":"Nomor Induk Berusaha (NIB) berfungsi sebagai ...","o":["Kartu kredit usaha","Surat pinjaman bank","Sertifikat merek","Identitas pelaku usaha yang juga dapat berlaku sebagai TDP dan API"],"a":3},{"q":"Pendaftaran NIB dilakukan melalui sistem OSS di situs ...","o":["www.oss.go.id","www.bec.bsi.ac.id","www.ef2.indonesiancreative.id","www.tracer.indonesiancreative.id"],"a":0},{"q":"Uraian maksud dan tujuan perusahaan dalam pendaftaran OSS harus sesuai dengan ...","o":["SNI 2020","ISO 9001","KBLI 2020","NPWP 2020"],"a":2},{"q":"Berdasarkan materi, proses pembuatan NIB melalui OSS ...","o":["Dikenakan biaya Rp500.000","Dapat dilakukan secara gratis","Hanya untuk perusahaan besar","Memerlukan akta notaris yang mahal"],"a":1},{"q":"Pelaku usaha yang mengembangkan atau mengadaptasi ide kreatif dari bisnis yang sudah ada tanpa melanggar hukum disebut ...","o":["Counterfeits","Product Pirates","Copycats","Creative Adaptors"],"a":3},{"q":"Pemalsuan produk dan pembajakan merek dalam materi disebut ...","o":["Counterfeits dan product pirates","Creative adaptors","Franchisor dan franchisee","Innovators"],"a":0},{"q":"Pengakuan dari lembaga berwenang atas suatu penemuan produk yang memberi hak kepada penemunya untuk membuat, menggunakan, dan menjual hasil penemuan disebut ...","o":["Merek dagang","Hak cipta","Paten","Lisensi usaha"],"a":2},{"q":"Identitas berupa nama, simbol, logo, atau slogan yang membedakan produk perusahaan dari produk lain disebut ...","o":["Paten","Merek dagang","Hak cipta","NIB"],"a":1},{"q":"Hak istimewa untuk melindungi keaslian hasil ciptaan seperti lagu dan tulisan disebut ...","o":["Paten","Merek dagang","Waralaba","Hak cipta"],"a":3},{"q":"QRIS adalah singkatan dari ...","o":["Quick Response Code Indonesian Standard","Quick Remittance Indonesian System","Quality Response Indonesia Service","Quick Receipt Internet Standard"],"a":0},{"q":"NIB dapat berlaku sebagai Angka Pengenal Impor (API) apabila pelaku usaha ...","o":["Membuka cabang baru","Melakukan kegiatan impor","Mengajukan paten","Menjual produk secara online"],"a":1},{"q":"Tahap pertama dalam pengajuan perizinan usaha secara online melalui OSS adalah ...","o":["Mengunduh Nomor Induk Berusaha","Mengisi data KBLI","Mencetak dokumen perizinan","Membuat akun OSS"],"a":3},{"q":"Informasi yang perlu dipersiapkan dalam pembuatan NIB adalah ...","o":["Nama dan Nomor Induk Kependudukan (NIK)","Nomor rekening tabungan","Nomor kartu kredit","Data pesaing usaha"],"a":0},{"q":"Sistem OSS terintegrasi dengan ...","o":["Bank Indonesia dan OJK","Bea Cukai saja","Ditjen AHU Kementerian Hukum dan HAM serta KSWP Direktorat Jenderal Pajak","Badan Pusat Statistik dan Kementerian Pendidikan"],"a":2},{"q":"Nilai nominal kriteria UMKM yang dapat berubah sesuai perkembangan ekonomi diatur melalui ...","o":["Peraturan Daerah","Peraturan Presiden","Surat Edaran Rektor","Keputusan Notaris"],"a":1},{"q":"Untuk menghindari pembajakan merek, seorang pengusaha tetap harus ...","o":["Menggunakan nama dan merek sendiri","Memakai logo milik pesaing","Meniru nama usaha yang sudah populer","Menggunakan merek terkenal tanpa izin"],"a":0},{"q":"Tugas kelompok pada materi Pertemuan 5 adalah ...","o":["Membuat company profile dan X-Banner","Menghitung BEP produk","Menyusun laporan keuangan","Mendaftarkan bisnis melalui OSS dan membuat QRIS"],"a":3},{"q":"Menurut Philip Kotler, pemasaran adalah ...","o":["Kegiatan menjual produk semata","Kegiatan mencetak brosur","Proses sosial dan manajerial untuk memperoleh kebutuhan dan keinginan melalui penciptaan, penawaran, dan pertukaran produk dan nilai","Proses menghitung biaya produksi"],"a":2},{"q":"STP dalam pemasaran adalah singkatan dari ...","o":["Sales, Target, Profit","Segmentation, Targeting, Positioning","Strategy, Tactic, Planning","Service, Trust, Price"],"a":1},{"q":"Menciptakan persepsi atau citra tertentu di benak konsumen mengenai produk atau merek disebut ...","o":["Segmentation","Targeting","Promotion","Positioning"],"a":3},{"q":"Konsep AIDA+S terdiri dari Attention, Interest, Desire, Action, dan ...","o":["Satisfaction","Sales","Strategy","Service"],"a":0},{"q":"Bukti fisik yang dapat dilihat konsumen, seperti tampilan tempat usaha dan kemasan, dalam bauran pemasaran 7P disebut ...","o":["Process","People","Physical Evidence","Place"],"a":2},{"q":"Unsur 7P yang berkaitan dengan orang-orang yang terlibat dalam bisnis, termasuk karyawan yang melayani pelanggan, adalah ...","o":["Promotion","People","Product","Process"],"a":1},{"q":"Media promosi yang berisi gambaran atau deskripsi mengenai suatu perusahaan beserta keunggulan produknya adalah ...","o":["Brosur","Katalog","X-Banner","Company Profile"],"a":3},{"q":"Banner yang menggunakan penyangga berbentuk huruf X sehingga dapat berdiri sendiri disebut ...","o":["X-Banner","Brosur","E-Catalog","Spanduk kain"],"a":0},{"q":"Katalog dalam bentuk digital dikenal dengan istilah ...","o":["E-brochure","E-banner","E-catalog","E-profile"],"a":2},{"q":"Menurut Schoell dalam Alma (2010:239), etika bisnis adalah ...","o":["Aturan pajak usaha","Sistem kewajiban berisi prinsip dan aturan perilaku berdasarkan keyakinan tentang perilaku bisnis yang benar dan salah","Teknik menaikkan harga jual","Strategi menghindari pesaing"],"a":1},{"q":"Berdasarkan materi, seorang wirausaha sebaiknya ...","o":["Mengejar keuntungan dengan segala cara","Menyembunyikan kekurangan produk dari pelanggan","Mengingkari janji jika menguntungkan","Lebih memilih rugi daripada untung dengan tindakan tidak terpuji"],"a":3},{"q":"Istilah pailit berasal dari bahasa Prancis failite yang berarti ...","o":["Kemacetan dalam proses pembayaran","Keuntungan besar","Kerja sama usaha","Pembagian saham"],"a":0},{"q":"Salah satu strategi menghindari risiko pailit dan bangkrut adalah ...","o":["Mencampur uang pribadi dan uang bisnis","Meniru seluruh strategi usaha orang lain","Memisahkan uang pribadi dengan uang hasil bisnis","Menghentikan pencatatan keuangan"],"a":2},{"q":"Pendekatan usaha yang menekankan nilai spiritual dan dikenal dengan ungkapan \"Do the Best, God Take the Rest\" disebut ...","o":["Marketing Mix","Marketing Langit","Marketing Digital","Marketing Relationship"],"a":1},{"q":"Targeting dalam konsep STP adalah ...","o":["Proses memilih kelompok pasar yang menjadi sasaran utama pemasaran produk","Proses membagi pasar menjadi beberapa kelompok konsumen","Proses menciptakan citra produk di benak konsumen","Proses menentukan harga jual produk"],"a":0},{"q":"Segmentation dalam konsep STP adalah ...","o":["Memilih kelompok pasar sasaran utama","Menentukan harga produk","Membagi pasar menjadi kelompok konsumen yang memiliki karakteristik atau kebutuhan serupa","Membuat promosi produk"],"a":2},{"q":"Price dalam bauran pemasaran 7P adalah ...","o":["Tempat atau saluran distribusi produk","Orang yang terlibat dalam bisnis","Rangkaian prosedur penyampaian layanan","Harga yang ditetapkan sesuai nilai produk dan kemampuan target konsumen"],"a":3},{"q":"Brosur adalah ...","o":["Media promosi berbentuk spanduk dengan penyangga huruf X","Media promosi cetak berisi informasi ringkas yang umumnya dicetak pada selembar kertas yang dapat dilipat","Daftar barang dalam bentuk digital","Media yang berisi profil perusahaan"],"a":1},{"q":"Menepati janji sebagai etika wirausaha berarti ...","o":["Menyampaikan informasi sesuai keadaan sebenarnya","Menerima konsekuensi dari setiap keputusan","Melaksanakan kesepakatan yang telah dibuat dengan pihak lain","Menjalankan usaha sesuai aturan waktu"],"a":2},{"q":"Bangkrut adalah kondisi ketika ...","o":["Usaha mengalami kerugian besar hingga menyebabkan kejatuhan perusahaan, toko, atau bentuk usaha lainnya","Debitur tidak mampu membayar utang kepada kreditur secara hukum","Keuntungan usaha menurun sementara","Perusahaan membagikan saham kepada investor"],"a":0},{"q":"Kepailitan dan penundaan kewajiban pembayaran utang diatur dalam ...","o":["Undang-Undang Nomor 20 Tahun 2008","Undang-Undang Nomor 11 Tahun 2020","Peraturan Pemerintah Nomor 7 Tahun 2021","Undang-Undang Nomor 37 Tahun 2004"],"a":3},{"q":"Setiap kelompok wajib menyediakan proposal Business Plan sebanyak ... rangkap untuk Entrepreneur Fair.","o":["Satu","Tiga","Lima","Dua"],"a":3},{"q":"Jumlah Company Profile yang harus disiapkan kelompok untuk Entrepreneur Fair adalah ...","o":["Dua lembar","Satu lembar","Tiga lembar","Lima lembar"],"a":0},{"q":"Jumlah katalog yang harus disiapkan kelompok untuk Entrepreneur Fair adalah ...","o":["Satu buah","Dua buah","Tiga buah","Lima buah"],"a":2},{"q":"Jumlah brosur yang harus disiapkan kelompok untuk Entrepreneur Fair adalah ...","o":["Tiga buah","Lima buah","Sepuluh buah","Dua buah"],"a":1},{"q":"Untuk memperoleh sertifikat Entrepreneur Fair, mahasiswa diwajibkan ...","o":["Membuat poster cetak","Menulis artikel jurnal","Mengikuti lomba desain","Membuat video Reels dan menandai akun BEC"],"a":3},{"q":"Formulir pendaftaran Entrepreneur Fair menyediakan kolom identitas anggota kelompok hingga ... orang.","o":["Sepuluh","Lima","Tiga","Dua puluh"],"a":0},{"q":"Formulir pendaftaran Entrepreneur Fair diajukan oleh ... dan disetujui oleh ...","o":["Anggota kelompok dan ketua jurusan","Dosen dan rektor","Ketua kelompok dan dosen mata kuliah Entrepreneur","Panitia dan sponsor"],"a":2},{"q":"Presentasi akhir dilaksanakan setelah Entrepreneur Fair, yaitu pada pertemuan ...","o":["Ke-5 sampai ke-8","Ke-10 sampai ke-15","Ke-1 sampai ke-3","Ke-8 sampai ke-9"],"a":1},{"q":"Presentasi akhir dibuat dengan format PowerPoint Slide dengan jumlah halaman ...","o":["Maksimal 10 slide","Maksimal 20 slide","Tepat 15 slide","Tidak dibatasi dan disesuaikan kebutuhan kelompok"],"a":3},{"q":"Penilaian presentasi akhir didasarkan pada ...","o":["Kemampuan memaparkan laporan, pemahaman materi, dan menjawab pertanyaan","Jumlah slide yang dibuat","Lamanya waktu presentasi saja","Banyaknya anggota kelompok"],"a":0},{"q":"Salah satu komponen penilaian project pada materi Pertemuan 7 adalah ...","o":["Jumlah modal usaha","Jumlah keuntungan penjualan","Kehadiran dalam seminar wajib","Jumlah pengikut media sosial"],"a":2},{"q":"Agar dosen dan audiens dapat mencoba produk secara langsung saat presentasi akhir, kelompok perlu menyiapkan ...","o":["Surat izin edar","Tester atau demo produk","Kartu nama","Sertifikat paten"],"a":1},{"q":"Video yang disiapkan untuk presentasi akhir berisi ...","o":["Iklan produk pesaing","Tutorial membuat PowerPoint","Profil dosen pengampu","Dokumentasi kegiatan sejak awal project"],"a":3},{"q":"Job Description yang disiapkan kelompok untuk Entrepreneur Fair berisi ...","o":["Pembagian tugas selama Entrepreneur Fair","Daftar harga produk","Laporan arus kas","Struktur modal usaha"],"a":0},{"q":"Perlengkapan pendukung yang perlu diperhatikan kelompok untuk Entrepreneur Fair adalah ...","o":["Genset dan tenda","Panggung dan sound system","Taplak meja dan kabel roll apabila dibutuhkan","Seragam sekolah"],"a":2},{"q":"Rundown yang harus disiapkan kelompok untuk Entrepreneur Fair adalah ...","o":["Susunan acara kegiatan","Pembagian tugas anggota","Daftar harga produk","Laporan arus kas"],"a":0},{"q":"Selain data kelompok dan identitas anggota, formulir pendaftaran Entrepreneur Fair juga memuat ...","o":["Foto produk saja","Nomor rekening anggota","Daftar pesaing usaha","Visi dan misi bisnis, deskripsi produk, strategi pemasaran, dan laporan arus kas"],"a":3},{"q":"Isi materi presentasi akhir harus sama dengan ...","o":["Isi brosur","Konten yang dicantumkan dalam laporan","Isi katalog","Isi video promosi"],"a":1},{"q":"Lembar penilaian yang dibawa kelompok pada Entrepreneur Fair menggunakan ...","o":["Format yang dibuat sendiri oleh kelompok","Format yang dibuat oleh dosen masing-masing","Format yang telah disiapkan oleh panitia","Format bebas sesuai selera"],"a":2},{"q":"Dalam persiapan presentasi akhir, proposal Business Plan berfungsi sebagai ...","o":["Dokumen utama yang menjelaskan perencanaan bisnis kelompok","Media promosi untuk calon konsumen","Dokumentasi perjalanan project","Alat peraga untuk mencoba produk"],"a":0},{"q":"Dalam persiapan presentasi akhir, marketing tools berfungsi sebagai ...","o":["Dokumen utama perencanaan bisnis","Dokumentasi kegiatan sejak awal project","Alat pembayaran digital","Media pendukung untuk memperkenalkan dan memasarkan produk"],"a":3},{"q":"Bagian persetujuan BEC pada formulir pendaftaran Entrepreneur Fair memuat ...","o":["Logo dan alamat usaha","Tanda tangan, nama, tanggal, dan status persetujuan","NIM dan nama anggota kelompok","Omzet dan laba usaha"],"a":1}];
+
+const $ = id => document.getElementById(id);
+let ans = Array(QUESTIONS.length).fill(null);
+let saved = Array(QUESTIONS.length).fill(false);
+let cur = 0;
+let active = false, blocked = false, viol = 0, nama = "";
+let suppressViol = false;
+
+const letter = i => String.fromCharCode(65 + i);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const getPertemuan = n => n <= 22 ? 1 : n <= 44 ? 2 : n <= 65 ? 3 : n <= 86 ? 4 : n <= 107 ? 5 : n <= 128 ? 6 : 7;
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("on"));
+  $(id).classList.add("on");
+}
+
+/* ---------- Fullscreen & keyboard lock ---------- */
+async function goFull(){
+  try{
+    const el = document.documentElement;
+    if(!document.fullscreenElement) await (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    if(navigator.keyboard && navigator.keyboard.lock) await navigator.keyboard.lock(["Escape","Tab"]).catch(() => {});
+    return true;
+  }catch(e){return false}
+}
+
+/* ---------- Mulai ---------- */
+$("btnStart").onclick = async () => {
+  nama = $("nama").value.trim();
+  if(nama.length < 3){
+    $("nama").focus();
+    $("nama").style.borderColor = "var(--warn)";
+    return;
+  }
+  $("nama").style.borderColor = "";
+  const ok = await goFull();
+  if(!ok && !confirm("Mode layar penuh tidak dapat diaktifkan di lingkungan ini (misalnya di dalam frame). Buka file di tab sendiri agar lockdown berfungsi penuh. Lanjutkan tetap?")) return;
+
+  active = true;
+  blocked = false;
+  suppressViol = false;
+  viol = 0;
+  cur = 0;
+  ans = Array(QUESTIONS.length).fill(null);
+  saved = Array(QUESTIONS.length).fill(false);
+
+  $("who").textContent = nama;
+  show("sExam");
+  render();
+  updViol();
+  updProgress();
+};
+
+/* ---------- Render soal ---------- */
+function render(){
+  const q = QUESTIONS[cur];
+  $("qNo").textContent = "Soal " + (cur + 1) + " dari " + QUESTIONS.length;
+  $("qPertemuan").textContent = "Pertemuan " + getPertemuan(cur + 1);
+  $("qText").textContent = q.q;
+
+  const opts = $("opts");
+  opts.innerHTML = "";
+  q.o.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "opt";
+
+    if(saved[cur]){
+      if(i === q.a) b.classList.add("correct");
+      if(ans[cur] === i && i !== q.a) b.classList.add("wrong");
+      b.disabled = true;
+    }else if(ans[cur] === i){
+      b.classList.add("sel");
+    }
+
+    b.textContent = letter(i) + ".  " + t;
+    b.onclick = () => {
+      if(saved[cur]) return;
+      ans[cur] = i;
+      render();
+    };
+    opts.appendChild(b);
+  });
+
+  const fb = $("feedback");
+  if(saved[cur]){
+    const ok = ans[cur] === q.a;
+    fb.className = "feedback " + (ok ? "good" : "bad");
+    fb.innerHTML = ok
+      ? "<strong>Benar!</strong> Jawaban yang benar: <strong>" + letter(q.a) + ". " + esc(q.o[q.a]) + "</strong>"
+      : "<strong>Belum tepat.</strong> Jawaban Anda: " + letter(ans[cur]) + ". " + esc(q.o[ans[cur]]) +
+        "<br><strong>Kunci jawaban: " + letter(q.a) + ". " + esc(q.o[q.a]) + "</strong>";
+  }else{
+    fb.className = "feedback hidden";
+    fb.innerHTML = "";
+  }
+
+  $("prev").disabled = cur === 0;
+
+  const saveBtn = $("save");
+  saveBtn.disabled = saved[cur] || ans[cur] === null;
+  saveBtn.textContent = saved[cur] ? "Jawaban Tersimpan" : "Simpan Jawaban";
+  saveBtn.classList.toggle("saved", saved[cur]);
+
+  $("next").textContent = cur === QUESTIONS.length - 1 ? "Selesai & Lihat Hasil" : "Berikutnya";
+
+  const dots = $("dots");
+  dots.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const d = document.createElement("button");
+    d.type = "button";
+    d.textContent = i + 1;
+    d.className = (saved[i] ? "done " : (ans[i] !== null ? "picked " : "")) + (i === cur ? "cur" : "");
+    d.setAttribute("aria-label", "Soal " + (i + 1) + (saved[i] ? " sudah disimpan" : ans[i] !== null ? " sudah dipilih" : ""));
+    d.onclick = () => { cur = i; render(); };
+    dots.appendChild(d);
+  });
+}
+
+/* ---------- Simpan jawaban & navigasi ---------- */
+$("save").onclick = () => {
+  if(saved[cur] || ans[cur] === null) return;
+  saved[cur] = true;
+  render();
+  updProgress();
+  const fb = $("feedback");
+  if(fb && fb.scrollIntoView) fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+};
+
+$("prev").onclick = () => {
+  if(cur > 0){ cur--; render(); }
+};
+
+$("next").onclick = () => {
+  if(!saved[cur] && ans[cur] !== null){
+    const fb = $("feedback");
+    fb.className = "feedback bad";
+    fb.textContent = "Tekan 'Simpan Jawaban' terlebih dahulu agar jawaban dinilai dan kunci jawaban ditampilkan.";
+    return;
+  }
+  if(cur < QUESTIONS.length - 1){
+    cur++;
+    render();
+    return;
+  }
+  const belum = saved.filter(v => !v).length;
+  if(belum === 0 || confirm(belum + " soal belum disimpan. Selesai dan lihat hasil?")) finish("Jawaban dikumpulkan.");
+};
+
+function updProgress(){
+  const n = saved.filter(Boolean).length;
+  $("progressTxt").textContent = "Tersimpan " + n + " dari " + QUESTIONS.length + " soal";
+}
+
+function updViol(){
+  $("violTxt").textContent = viol ? ("Pelanggaran: " + viol + " dari " + MAX_VIOL) : "";
+}
+
+/* ---------- Halaman diblokir ---------- */
+function violation(reason){
+  if(!active || blocked || suppressViol) return;
+  viol++;
+  blocked = true;
+  updViol();
+  $("blockWhy").textContent = reason;
+  if(viol >= MAX_VIOL){
+    finish("Ujian dihentikan karena " + MAX_VIOL + " kali pelanggaran.");
+    return;
+  }
+  $("blockCount").textContent = "Pelanggaran " + viol + " dari " + MAX_VIOL + ". Pelanggaran ke-" + MAX_VIOL + " akan menghentikan ujian.";
+  $("block").classList.add("on");
+}
+
+$("btnResume").onclick = async () => {
+  await goFull();
+  blocked = false;
+  $("block").classList.remove("on");
+};
+
+/* ---------- Keluar ujian (selalu tersedia) ---------- */
+function exitExam(){
+  if(!active) return;
+  suppressViol = true;
+  const yes = confirm("Keluar dari ujian? Jawaban yang sudah disimpan akan dinilai.");
+  if(!yes){ suppressViol = false; return; }
+  finish("Anda keluar dari ujian.");
+}
+$("btnExit").onclick = exitExam;
+$("btnExitBlock").onclick = exitExam;
+
+$("btnHome").onclick = () => {
+  active = false;
+  blocked = false;
+  suppressViol = false;
+  $("block").classList.remove("on");
+  show("sStart");
+  $("nama").value = "";
+  $("nama").style.borderColor = "";
+};
+
+/* ---------- Deteksi pelanggaran ---------- */
+document.addEventListener("visibilitychange", () => { if(document.hidden) violation("Anda berpindah tab atau aplikasi."); });
+window.addEventListener("blur", () => violation("Jendela ujian kehilangan fokus (berpindah jendela atau aplikasi)."));
+document.addEventListener("fullscreenchange", () => { if(active && !document.fullscreenElement) violation("Anda keluar dari mode layar penuh."); });
+document.addEventListener("webkitfullscreenchange", () => { if(active && !document.webkitFullscreenElement) violation("Anda keluar dari mode layar penuh."); });
+window.addEventListener("resize", () => {
+  if(active && !blocked && !document.fullscreenElement && window.innerHeight < screen.height - 120) violation("Ukuran jendela ujian berubah.");
+});
+
+/* ---------- Lockdown input ---------- */
+["contextmenu","copy","cut","paste","dragstart","selectstart"].forEach(ev =>
+  document.addEventListener(ev, e => {
+    if(!active) return;
+    if(ev === "selectstart" && e.target.closest && e.target.closest("input")) return;
+    e.preventDefault();
+  })
+);
+
+document.addEventListener("keydown", e => {
+  if(!active) return;
+  const k = e.key.toLowerCase(), c = e.ctrlKey || e.metaKey;
+  const bad = e.key === "F12" || e.key === "F11" || e.key === "F5" || e.key === "PrintScreen" ||
+    (c && ["c","v","x","a","u","s","p","t","n","w","r","l","f","j","k"].includes(k)) ||
+    (c && e.shiftKey && ["i","j","c","n","t","delete"].includes(k)) ||
+    (e.altKey && ["arrowleft","arrowright","tab","f4"].includes(k)) ||
+    e.key === "Meta" || e.key === "ContextMenu";
+  if(bad){
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.key === "PrintScreen") violation("Percobaan mengambil tangkapan layar.");
+  }
+}, true);
+
+window.addEventListener("beforeunload", e => { if(active){ e.preventDefault(); e.returnValue = ""; } });
+history.pushState(null, "", location.href);
+window.addEventListener("popstate", () => { if(active) history.pushState(null, "", location.href); });
+
+/* ---------- Selesai ---------- */
+function finish(note){
+  if(!active) return;
+  active = false;
+  blocked = false;
+  $("block").classList.remove("on");
+  if(navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock();
+  if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+
+  const benar = QUESTIONS.filter((q, i) => saved[i] && ans[i] === q.a).length;
+  const tersimpan = saved.filter(Boolean).length;
+
+  $("endNote").textContent = note;
+  $("score").textContent = Math.round(benar / QUESTIONS.length * 100);
+  $("endMeta").textContent = nama + " · benar " + benar + " dari " + QUESTIONS.length +
+    " · tersimpan " + tersimpan + " · pelanggaran " + viol;
+
+  let html = "";
+  let lastP = 0;
+  QUESTIONS.forEach((q, i) => {
+    const p = getPertemuan(i + 1);
+    if(p !== lastP){
+      if(lastP) html += "</div>";
+      html += '<h3 class="rev-head">Pertemuan ' + p + '</h3><div class="rev-group">';
+      lastP = p;
+    }
+    const dijawab = ans[i] !== null;
+    const ok = saved[i] && ans[i] === q.a;
+    const status = !dijawab ? "Belum dijawab" : !saved[i] ? "Belum disimpan" : ok ? "Benar" : "Salah";
+    const cls = ok ? "ok" : "bad";
+    html += '<div class="rev">' +
+      '<div class="rev-q"><strong>' + (i + 1) + '.</strong> ' + esc(q.q) + '</div>' +
+      '<div class="rev-line ' + cls + '">Jawaban Anda: ' +
+        (dijawab ? letter(ans[i]) + ". " + esc(q.o[ans[i]]) : "—") +
+        ' <span class="tag">' + status + '</span></div>' +
+      '<div class="rev-line ok">Kunci: ' + letter(q.a) + ". " + esc(q.o[q.a]) + '</div>' +
+    '</div>';
+  });
+  if(lastP) html += "</div>";
+
+  $("review").innerHTML = html;
+  show("sEnd");
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
